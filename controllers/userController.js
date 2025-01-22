@@ -7,14 +7,14 @@ const createUser = async (req, res) => {
   try {
     req.body.password = await bcrypt.hash(req.body.password, saltRounds);
     const newUser = await User.create(req.body);
-    res.status(201).json({
+    return res.status(201).json({
       status: "ok",
       data: {
         user: newUser,
       },
     });
   } catch (err) {
-    res.status(400).json({
+    return res.status(400).json({
       message: `user is not created ${err}`,
     });
   }
@@ -51,7 +51,7 @@ const addGroup = async (req, res) => {
     // Save the updated user document
     await user.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       status: "ok",
       data: user.group,
       message: "Group added successfully",
@@ -93,12 +93,12 @@ const addNote = async (req, res) => {
     // Save the updated user document
     await user.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Note added successfully",
       data: user.notes,
     });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       message: `Error adding Note: ${err.message}`,
     });
   }
