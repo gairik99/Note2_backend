@@ -9,7 +9,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1", authRouter);
 
 app.get("/", (req, res) => {
-  res.send("hello world");
+  return res.status(200).json({ message: "this is home page" });
 });
 
 module.exports = app;
