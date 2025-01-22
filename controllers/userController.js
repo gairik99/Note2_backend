@@ -1,0 +1,107 @@
+const bcrypt = require("bcrypt");
+const User = require("../models/userModel");
+
+const saltRounds = 10;
+
+const createUser = async (req, res) => {
+  try {
+    req.body.password = await bcrypt.hash(req.body.password, saltRounds);
+    const newUser = await User.create(req.body);
+    res.status(201).json({
+      status: "ok",
+      data: {
+        user: newUser,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: `user is not created ${err}`,
+    });
+  }
+};
+
+const addGroup = async (req, res) => {
+  try {
+    const { id } = req.user; // Get user ID from authenticated request
+    const { fname, sname, color } = req.body; // Extract group details
+
+    // Validate required fields
+    if (!fname || !sname || !color) {
+      return res.status(400).json({
+        message: "Please provide full name, short name, color",
+      });
+    }
+
+    // Find user by ID
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    // Add new group to the user's groups array
+    user.group.push({
+      fname,
+      sname,
+      color,
+    });
+
+    // Save the updated user document
+    await user.save();
+
+    res.status(200).json({
+      status: "ok",
+      data: user.group,
+      message: "Group added successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: `Error adding group: ${err.message}`,
+    });
+  }
+};
+
+const addNote = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const { note, date, time, groupId } = req.body;
+
+    // Validate required fields
+    if (!note || !date || !time || !groupId) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Find the user by ID
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the provided groupId exists in the user's groups
+    const groupExists = user.group.some(
+      (group) => group._id.toString() === groupId
+    );
+    if (!groupExists) {
+      return res.status(400).json({ message: "Invalid group ID" });
+    }
+
+    // Add new note to the user's notes array
+    user.notes.push({ note, date, time, groupId });
+
+    // Save the updated user document
+    await user.save();
+
+    res.status(200).json({
+      message: "Note added successfully",
+      data: user.notes,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: `Error adding Note: ${err.message}`,
+    });
+  }
+};
+
+module.exports = { createUser, addGroup, addNote };
