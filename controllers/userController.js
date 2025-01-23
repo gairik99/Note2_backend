@@ -9,9 +9,7 @@ const createUser = async (req, res) => {
     const newUser = await User.create(req.body);
     return res.status(201).json({
       status: "ok",
-      data: {
-        user: newUser,
-      },
+      user: newUser,
     });
   } catch (err) {
     return res.status(400).json({
