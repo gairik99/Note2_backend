@@ -41,19 +41,21 @@ const addGroup = async (req, res) => {
       });
     }
 
-    // Add new group to the user's groups array
-    user.group.push({
+    const newGroup = {
       fname,
       sname,
       color,
-    });
+    };
+
+    // Add new group to the user's groups array
+    user.group.push(newGroup);
 
     // Save the updated user document
     await user.save();
 
     return res.status(200).json({
       status: "ok",
-      data: user.group,
+      data: newGroup,
       message: "Group added successfully",
     });
   } catch (err) {
