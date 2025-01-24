@@ -7,9 +7,11 @@ const createUser = async (req, res) => {
   try {
     req.body.password = await bcrypt.hash(req.body.password, saltRounds);
     const newUser = await User.create(req.body);
+
+    const { password, ...userWithoutPassword } = newUser.toObject();
     return res.status(201).json({
       status: "ok",
-      user: newUser,
+      user: userWithoutPassword,
     });
   } catch (err) {
     return res.status(400).json({

@@ -19,11 +19,9 @@ const login = async (req, res) => {
 
     const { password, ...userWithoutPassword } = user.toObject();
     res.status(200).json({
-      status: "success",
+      status: "ok",
       token,
-      data: {
-        user: userWithoutPassword,
-      },
+      user: userWithoutPassword,
     });
   } catch (err) {
     res.status(404).json({ message: "user not found" });
