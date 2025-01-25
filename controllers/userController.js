@@ -86,15 +86,20 @@ const addNote = async (req, res) => {
       return res.status(400).json({ message: "Invalid group ID" });
     }
 
-    // Add new note to the user's notes array
-    user.notes.push({ note, date, time, groupId });
+    // Create the new note object and push it to the user's notes
+    const newNote = { note, date, time, groupId };
+    user.notes.push(newNote);
 
     // Save the updated user document
     await user.save();
 
+    // Retrieve the newly added note
+    const savedNote = user.notes[user.notes.length - 1];
+
     return res.status(200).json({
+      status: "ok",
       message: "Note added successfully",
-      data: user.notes,
+      data: savedNote, // Send both the _id and the note details
     });
   } catch (err) {
     return res.status(500).json({
