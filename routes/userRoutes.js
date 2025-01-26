@@ -14,6 +14,6 @@ router.route("/").post(createUser);
 router.route("/addGroup").patch(validateToken, addGroup);
 router.route("/addNote").patch(validateToken, addNote);
 router.route("/updateNote").patch(validateToken, updateNote);
-router.route("/deleteNote").patch(validateToken, deleteNote);
+router.route("/deleteNote").delete(validateToken, deleteNote);
 
 module.exports = router;
