@@ -108,4 +108,41 @@ const addNote = async (req, res) => {
   }
 };
 
-module.exports = { createUser, addGroup, addNote };
+const updateNote = async (req, res) => {
+  try {
+    const { _id, note } = req.body; // Extract note ID and updated note text from the request body
+    const { id } = req.user; // Extract user ID from the authenticated user
+
+    // Find the user by their ID
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find the specific note in the user's notes array
+    const noteToUpdate = user.notes.find((n) => n._id.toString() === _id);
+
+    if (!noteToUpdate) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    // Update the note text
+    noteToUpdate.note = note;
+
+    // Save the updated user document
+    await user.save();
+
+    // Respond with the updated note
+    res
+      .status(200)
+      .json({ message: "Note updated successfully", note: noteToUpdate });
+  } catch (error) {
+    console.error("Error updating note:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong while updating the note" });
+  }
+};
+
+module.exports = { createUser, addGroup, addNote, updateNote };
