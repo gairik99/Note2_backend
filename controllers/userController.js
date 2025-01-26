@@ -175,9 +175,10 @@ const deleteNote = async (req, res) => {
     await user.save();
 
     // Respond with success message
-    res.status(200).json({ message: "Note deleted successfully" });
+    res
+      .status(200)
+      .json({ status: "ok", message: "Note deleted successfully" });
   } catch (error) {
-    console.error("Error deleting note:", error);
     res
       .status(500)
       .json({ message: "Something went wrong while deleting the note" });
