@@ -7,11 +7,13 @@ const {
   addGroup,
   addNote,
   updateNote,
+  deleteNote,
 } = require("../controllers/userController");
 
 router.route("/").post(createUser);
 router.route("/addGroup").patch(validateToken, addGroup);
 router.route("/addNote").patch(validateToken, addNote);
 router.route("/updateNote").patch(validateToken, updateNote);
+router.route("/deleteNote").patch(validateToken, deleteNote);
 
 module.exports = router;

@@ -134,13 +134,11 @@ const updateNote = async (req, res) => {
     await user.save();
 
     // Respond with the updated note
-    res
-      .status(200)
-      .json({
-        status: "ok",
-        message: "Note updated successfully",
-        note: noteToUpdate,
-      });
+    res.status(200).json({
+      status: "ok",
+      message: "Note updated successfully",
+      note: noteToUpdate,
+    });
   } catch (error) {
     console.error("Error updating note:", error);
     res
@@ -149,4 +147,41 @@ const updateNote = async (req, res) => {
   }
 };
 
-module.exports = { createUser, addGroup, addNote, updateNote };
+const deleteNote = async (req, res) => {
+  try {
+    const { _id } = req.body; // Extract note ID from the request body
+    const { id } = req.user; // Extract user ID from the authenticated user
+
+    // Find the user by their ID
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find the index of the note in the user's notes array
+    const noteIndex = user.notes.findIndex(
+      (note) => note._id.toString() === _id
+    );
+
+    if (noteIndex === -1) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    // Remove the note from the array
+    user.notes.splice(noteIndex, 1);
+
+    // Save the updated user document
+    await user.save();
+
+    // Respond with success message
+    res.status(200).json({ message: "Note deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting note:", error);
+    res
+      .status(500)
+      .json({ message: "Something went wrong while deleting the note" });
+  }
+};
+
+module.exports = { createUser, addGroup, addNote, updateNote, deleteNote };
