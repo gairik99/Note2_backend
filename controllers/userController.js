@@ -136,7 +136,11 @@ const updateNote = async (req, res) => {
     // Respond with the updated note
     res
       .status(200)
-      .json({ message: "Note updated successfully", note: noteToUpdate });
+      .json({
+        status: "ok",
+        message: "Note updated successfully",
+        note: noteToUpdate,
+      });
   } catch (error) {
     console.error("Error updating note:", error);
     res
